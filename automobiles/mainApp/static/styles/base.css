@@ -1,0 +1,139 @@
+:root {
+    font-size: 15px;
+}
+
+/* General */
+*, *::before, *::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+a:hover {
+    color: dodgerblue;
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.main {
+    flex: 1 1 0;
+    width: 100%;
+}
+.main__container {
+    height: 100%;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    padding: 15px;
+}
+
+/* Header and nav-menu*/
+.header {
+    border-bottom: 1px solid black; 
+}
+.header__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+}
+.header__logo {
+    font-size: 1.5rem;
+    text-decoration: none;
+    font-weight: bold;
+}
+.header__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.header__user-info {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 2px 5px;
+    font-weight: 600;
+}
+.header__user-info a:hover {
+    background-color: transparent;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.menu__link {
+    display: inline-block;
+    text-decoration: none;
+}
+
+/* Common texts */
+.common-text {
+    font-size: 1.067rem;
+}
+.common-text--size_big {
+    font-size: 1.67rem;
+}
+.common-text--size_small {
+    font-size: 0.9rem;
+}
+
+/* Buttons */
+.btn {
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 1.1rem;
+    display: inline-block;
+    width: fit-content;
+}
+
+/* Form */
+.form {
+    width: 600px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    margin: 30px auto 0;
+}
+
+input, textarea {
+    font-size: 1.1rem;
+    padding: 5px;
+    min-width: 250px;
+    resize: none;
+}
+
+/* Footer */
+.footer {
+    border-top: 1px solid black; 
+}
+.footer__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block document_title %}Главная{% endblock document_title %}
+{% block additional_styles %}{% endblock additional_styles %}
+{% block content %}
+    <h1>Автомобили. Новости, объявления, продажа, общение</h1>
+    {% if user.is_authenticated %}
+    <p class="common-text">Здравствуйте, {{ user }}, добро пожаловать!</p>
+    {% else %}
+    <p class="common-text">Пожалуйста, пройдите регистрацию или авторизуйтесь.</p>
+    {% endif %}
+{% endblock content %}

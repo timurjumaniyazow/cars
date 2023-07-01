@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block document_title %}Объявления{% endblock document_title %}
+{% block additional_styles %}
+<style>
+    .advertisement {
+        margin: 10px auto 0;
+        border: 1px solid black;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        max-width: 60%;
+    }
+    .advertisement__title {
+        font-weight: Bold;
+    }
+    .advertisement__price {
+        font-weight: Bold;
+    }
+    .advertisement__desc {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: flex-start;
+    }
+
+    img {
+        width: 100%;
+        max-width: 30%;
+        height: 200px;
+        align-self: flex-start;
+        display: inline-block;
+        align-self: center;
+        object-fit: cover;
+    }
+
+    .btn {
+        box-shadow: 0 0 5px 1px gray;
+        margin-top: 10px;
+    }
+</style>
+{% endblock additional_styles %}
+
+{% block content %}
+    {% load static %}
+
+    <h1>Объявления</h1>
+    {% if user.is_authenticated %}
+        <a href="{% url 'mainApp:add_advertisement' %}" class="btn">Разместить объявление</a>
+    {% endif %}
+    {% if advertisements %}
+    {% for record in advertisements %}
+    <a href="{% url 'mainApp:one_advertisement' record.id %}" class="advertisement">
+        <img class="" src="{% static record.image %}" alt="">
+        <div class="advertisement__desc">
+            <p class="advertisement__title common-text">{{ record.title }}</p>
+            <p class="advertisement__price common-text">Цена: {{ record.price }} рублей</p>
+            <p class="advertisement__author common-text">Автор объявления: {{ record.author }}</p>
+        </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <p class="common-text">Простите, объявления не найдены</p>
+    {% endif %}
+{% endblock content %}
