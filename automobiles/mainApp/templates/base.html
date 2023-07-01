@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block document_title %}Базовая{% endblock document_title %}</title>
+    <link rel="stylesheet" href="{% static 'styles/base.css' %}">
+    {% block additional_styles %}{% endblock additional_styles %}
+</head>
+<body>
+    <header class="header">
+        <div class="container header__container">
+            <a href="/" class="header__logo">Автопродажи</a>
+            <nav class="header__nav">
+                <ul class="menu">
+                    <li class="menu__item">
+                        <a class="menu__link" href="{% url 'mainApp:all_advertisements' %}">Объявления</a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="{% url 'mainApp:all_news' %}">Новости</a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="/admin">Админка</a>
+                    </li>
+                </ul>
+                <ul class="menu header__user-info">
+                    {% if not user.is_authenticated %}
+                        <li class="menu__item">
+                            <a class="menu__link" href="{% url 'users:register' %}">Регистрация</a>
+                        </li>
+                        <li class="menu__item">
+                            <a class="menu__link" href="{% url 'users:login' %}">Вход</a>
+                        </li>
+                    {% else %}
+                        <li class="menu__item">
+                            <a class="menu__link" href="{% url 'mainApp:author_profile' user.id %}">{{ user }}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container main__container">
+            {% block content %}{% endblock content %}
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container footer__container">
+            <p class="common-text common-text--size_big">Работу выполнил студент группы 221-321, Джуманиязов Тимур</p>
+        </div>
+    </footer>
+</body>

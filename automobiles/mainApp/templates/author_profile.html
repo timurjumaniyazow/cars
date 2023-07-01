@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block document_title %}Профиль{% endblock document_title %}
+{% block additional_styles %}
+<style>
+    .profile-container {
+        margin-top: 20px;
+        display: grid;
+        grid-template: 1fr 1fr / 1fr 1fr;
+        gap: 20px;
+    }
+    .advertisements, .info, .messages {
+        border: 1px solid black;
+        gap: 10px;
+        padding: 5px;
+        max-height: 500px;
+        overflow-y: scroll;
+    }
+    .list {
+        gap: 10px;
+    }
+
+    .advertisement {
+        border: 1px solid black;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        max-width: 98%;
+    }
+    .advertisement__title {
+        font-weight: Bold;
+    }
+    .advertisement__price {
+        font-weight: Bold;
+    }
+    .advertisement__desc {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: flex-start;
+    }
+    .advertisement__author {
+        justify-self: flex-end;
+    }
+
+    img {
+        width: 100%;
+        max-width: 30%;
+        height: 100px;
+        align-self: flex-start;
+        display: inline-block;
+        align-self: center;
+        object-fit: cover;
+    }
+
+    .btn {
+        box-shadow: 0 0 5px 1px gray;
+    }
+</style>
+{% endblock additional_styles %}
+{% block content %}
+    {% load static %}
+
+    <h1>Профиль пользвателя {{ author }}</h1>
+    <div class="profile-container">
+        <div class="advertisements wrapper">
+            <h2>Объявления</h2>
+            <div class="list wrapper" style="align-items: center;">
+                {% if advertisements %}
+                {% for record in advertisements %}
+                <a href="{% url 'mainApp:one_advertisement' record.id %}" class="advertisement">
+                    <img class="" src="{% static record.image %}" alt="">
+                    <div class="advertisement__desc">
+                        <p class="advertisement__title common-text">{{ record.title }}</p>
+                        <p class="advertisement__price common-text">Цена: {{ record.price }} рублей</p>
+                        <p class="common-text">Статус: {% if not record.is_close %}Открыто{% else %}Закрыто{% endif %}</p>
+                    </div>
+                </a>
+                {% endfor %}
+                {% else %}
+                <p class="common-text">Объявления не найдены</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="info wrapper">
+            <h2>Общая информация</h2>
+            <div class="list wrapper">
+                <p class="common-text">Имя пользователя: {{ author }}</p>
+                <p class="common-text">Контакт пользователя: {{ author.email }}</p>
+                <p class="common-text">Рейтинг пользователя: <span class="rating-value">{{ author_rating }}</span></p>
+                {% if user.is_authenticated and user.id != author.id %}
+                <div class="button-box">
+                    {% csrf_token %}
+                    <button class="btn like-button">Поставить оценку "Хорошо"</button>
+                    <button class="btn dislike-button">Поставить оценку "Плохо"</button>
+                </div>
+                {% endif %}
+                <p class="common-text">Количество объявлений: {{ advertisements|length}}</p>
+                {% if user.id == author.id %}
+                <a href="{% url 'users:logout' %}" class="btn">Выйти из профиля</a>
+                {% endif %}
+            </div>
+        </div>
+        {% if user.id == author.id %}
+        <div class="messages wrapper" style="grid-column: 2;">
+            <h2>Ваши последние сообщения</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.sender.id != user.id %}
+                    <a href="{% url 'mainApp:chat' message.sender.id %}">Пользователь {{ message.sender }} написал вам - {{ message.created_time }} ({{ message.created_date }})</a>
+                    {% else %}
+                    <a href="{% url 'mainApp:chat' message.recipient.id %}">Вы написали пользователю {{ message.recipient }} - {{ message.created_time }} ({{ message.created_date }})</a>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        const likeButton = document.querySelector('.like-button')
+        const dislikeButton = document.querySelector('.dislike-button')
+        const ratingValue = document.querySelector('.rating-value')
+
+        if ('{{ was_evaluated }}') {
+            if ('{{ was_evaluated.value }}' === '1') {
+                dislikeButton.style.display = 'none'
+                likeButton.innerText = 'Убрать оценку "Хорошо"'
+            }
+            else {
+                likeButton.style.display = 'none'
+                dislikeButton.innerText = 'Убрать оценку "Плохо"'
+            }
+        }
+
+        async function request(url, method, body) {
+            let headers = {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+
+            if (method == 'post') {
+                const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value
+                headers['X-CSRFToken'] = csrf
+            }
+
+            let response = await fetch(url, {
+                method: method,
+                headers: headers,
+                body: body
+            })
+            
+            return data = await response.json()
+        }
+
+        async function setRating(action) {
+            data = await request(
+                url='{% url "mainApp:set_rating" %}', 
+                method='post', 
+                body=JSON.stringify({
+                    'action': action, 
+                    'evaluating': '{{ user.id }}', 
+                    'evaluated': '{{ author.id }}'
+                })
+            )
+
+            if (data['message'] === 'like') {
+                dislikeButton.style.display = 'none'
+                likeButton.innerText = 'Убрать оценку "Хорошо"'
+                ratingValue.innerText =  String(Number(ratingValue.innerText) + 1)
+            } else if (data['message'] === 'dislike') {
+                likeButton.style.display = 'none'
+                dislikeButton.innerText = 'Убрать оценку "Плохо"'
+                ratingValue.innerHTML = String(Number(ratingValue.innerText) - 1)
+            } else if (data['message'] === 'like delete') {
+                dislikeButton.style.display = 'inline-block'
+                likeButton.style.display = 'inline-block'
+                likeButton.innerText = 'Поставить оценку "Хорошо"'
+                dislikeButton.innerText = 'Поставить оценку "Плохо"'
+                ratingValue.innerText = String(Number(ratingValue.innerText) - 1)
+            } else if (data['message'] === 'dislike delete') {
+                dislikeButton.style.display = 'inline-block'
+                likeButton.style.display = 'inline-block'
+                likeButton.innerText = 'Поставить оценку "Хорошо"'
+                dislikeButton.innerText = 'Поставить оценку "Плохо"'
+                ratingValue.innerText = String(Number(ratingValue.innerText) + 1)
+            }
+        }
+
+        if (likeButton && dislikeButton) {
+            likeButton.addEventListener('click', async () => {setRating('like')})
+            dislikeButton.addEventListener('click', async () => {setRating('dislike')})
+        }
+    </script>
+{% endblock content %}

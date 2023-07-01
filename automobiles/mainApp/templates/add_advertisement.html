@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block document_title %}Новое объявление{% endblock document_title %}
+{% block additional_styles %}
+<style>
+    form {
+        max-width: 60%;
+        margin: 20px auto 0;
+        gap: 10px;
+    }
+    fieldset {
+        padding: 10px;
+        gap: 10px;
+    }
+</style>
+{% endblock additional_styles %}
+
+{% block content %}
+    <h1>Размещение объявления</h1>
+    <form enctype="multipart/form-data" method='post' action="" class="wrapper">
+        {% csrf_token %}
+        <fieldset class="wrapper">
+            <legend>Об объявлении</legend>
+            <label for="title">Заголовок</label>
+            <input type="text" name="title" id="title" required>
+            <label for="text">Описание</label>
+            <textarea name="text" id="text" cols="30" rows="10" required></textarea>
+            <label for="price">Цена</label>
+            <input type="number" name="price" id="price" required>
+            <label for="image">Изображение</label>
+            <input type="file" name="image" id="image" required>
+        </fieldset>
+        <fieldset class="wrapper">
+            <legend>Об автомобиле</legend>
+            <label for="mark">Марка</label>
+            <input type="text" name="mark" id="mark" required>
+            <label for="model">Модель</label>
+            <input type="text" name="model" id="model" required>
+            <label for="year">Год выпуска</label>
+            <input type="number" name="year" id="year" required>
+            <label for="color">Цвет кузова</label>
+            <input type="text" name="color" id="color" required>
+            <label for="vin">VIN номер</label>
+            <input type="text" name="vin" id="vin" required>
+        </fieldset>
+        <button class="btn" type="submit" style="align-self: flex-end;">Отправить</button>
+    </form>
+{% endblock content %}

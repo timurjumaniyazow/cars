@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block document_title %}Ошибка{% endblock document_title %}
+{% block additional_styles %}{% endblock additional_styles %}
+{% block content %}
+    <h1>{{ error_title }}</h1>
+    <hr>
+    <p>{{ error_text }}</p>
+{% endblock content %}

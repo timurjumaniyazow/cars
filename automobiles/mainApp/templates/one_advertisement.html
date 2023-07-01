@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block document_title %}Объявление{% endblock document_title %}
+{% block additional_styles %}
+<style>
+    a {
+        text-decoration: underline;
+    }
+
+    .info {
+        display: flex;
+        padding: 10px;
+        gap: 15px;
+    }
+    .info__text {
+        min-height: 250px;
+    }
+    .flex-container {
+        display: flex;
+        gap: 20px;
+        height: 100%;
+    }
+    img {
+        width: 100%;
+        max-width: 40%;
+        min-height: 400px;
+        align-self: flex-start;
+        display: inline-block;
+        object-fit: cover;
+    }
+
+    .btn {
+        box-shadow: 0 0 5px 1px gray;
+    }
+</style>
+{% endblock additional_styles %}
+{% block content %}
+    {% load static %}
+    <h1>{{ advertisement.title }}</h1>
+    <h2>Содержание</h2>
+    <div class="info">
+        <img src="{% static advertisement.image %}" alt="">
+        <div class="flex-container wrapper">
+            <h3>Основная информация</h3>
+            <p class="common-text">Цена: {{ advertisement.price }} рублей</p>
+            <p class="common-text">{{ advertisement.text }}</p>
+            <h3>Об авторе</h3>
+            <div class="">
+                <p class="common-text">Автор объявления: <a href="{% url 'mainApp:author_profile' advertisement.author.id %}">{{ advertisement.author }}</a></p>
+                <p class="common-text">Контакт автора: {{ advertisement.author.email }}</p>
+                <p class="common-text">Рейтинг автора: {{ author_rating }}</p>
+            </div>
+            {% if user.is_authenticated %}
+            {% if user.id != advertisement.author.id %}
+            <a href="{% url 'mainApp:chat' advertisement.author.id %}" class="btn">Начать переписку</a>
+            {% else %}
+            <a href="{% url 'mainApp:delete_advertisement' advertisement.id %}" class="btn">Удалить объявление</a>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <h2>Подробнее об автомобиле</h2>
+    <div class="info wrapper">
+        <p class="common-text">Марка: {{ car.mark }}</p>
+        <p class="common-text">Модель: {{ car.model }}</p>
+        <p class="common-text">Год выпуска: {{ car.year }}</p>
+        <p class="common-text">Цвет кузова: {{ car.color }}</p>
+        <p class="common-text">VIN номер: {{ car.vin_number }}</p>
+        <p class="common-text">Владелец: {{ car.owner }}</p>
+    </div>
+{% endblock content %}

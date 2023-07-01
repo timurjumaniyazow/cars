@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block document_title %}Авторизация{% endblock document_title %}
+{% block additional_styles %}{% endblock additional_styles %}
+
+{% block content %}
+    <h1>Авторизация</h1>
+    <form action="{% url 'users:login' %}" method="post" class="form">
+        {% csrf_token %}
+        {{ form }}
+        <button style="align-self: flex-end;" class="btn" type="submit">Отправить</button>
+    </form>
+{% endblock content %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block document_title %}Переписка{% endblock document_title %}
+{% block additional_styles %}
+<style>
+    .chat-container {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+    .messages {
+        gap: 10px;
+        border: 1px solid black;
+        height: 500px;
+        width: 700px;
+        overflow-y: scroll;
+        padding: 10px;
+    }
+
+    .message {
+        width: 50%;
+        padding: 5px;
+        gap: 10px;
+        border: 1px solid black;
+    }
+    .message--sender {
+        align-self: flex-end;
+    }
+    .message__created {
+        display: flex;
+        justify-content: end;
+        align-self: flex-end;
+        gap: 10px;
+    }
+
+
+    form {
+        border: 1px solid black;
+        align-self: flex-start;
+        width: 40%;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    textarea {
+        width: 100%;
+    }
+</style>
+{% endblock additional_styles %}
+
+{% block content %}
+    <h1>Чат</h1>
+    <div class="chat-container">
+        <div class="messages wrapper">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="message wrapper {% if message.sender.id == user.id %}message--sender{% endif %}">
+                <p class="message__sender">{{ message.sender }}</p>
+                <p class="message__text">{{ message.text }}</p>
+                <div class="message__created">
+                    <p class="message__time">{{ message.created_time }}</p>
+                    <p class="message__date">{{ message.created_date }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <form action="{% url 'mainApp:send_message' recipient.id %}" class="wrapper" method="post">
+            {% csrf_token %}
+            <label for="text">Введите текст сообщения</label>
+            <textarea name="text" id="text" rows="10" required></textarea>
+            <button class="btn" type="submit" style="align-self: flex-end;">Отправить</button>
+        </form>
+    </div>
+{% endblock content %}

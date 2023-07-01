@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block document_title %}Статья{% endblock document_title %}
+{% block additional_styles %}
+    <style>
+        .info {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        .info__text {
+            min-height: 250px;
+        }
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            height: 100%;
+        }
+        .info__image {
+            width: 100%;
+            max-width: 30%;
+            align-self: flex-start;
+            display: inline-block;
+            object-fit: cover;
+        }
+
+        .comments {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .comment {
+            width: 60%;
+            padding: 10px;
+            gap: 10px;
+            border: 1px solid black;
+        }
+        .comment__author {
+            font-weight: bold;
+        }
+
+        .btn {
+        box-shadow: 0 0 5px 1px gray;
+        margin: 7px 0px;
+        }
+    </style>
+{% endblock additional_styles %}
+{% block content %}
+    {% load static %}
+    <h1>{{ article.title }}</h1>
+    <h2>Содержание</h2>
+    <div class="info">
+        <div class="flex-container">
+            {% if article.image %}
+            <img class="info__image" src="{% static article.image %}" alt="">
+            {% endif %}
+            <p class="info__text common-text">{{article.text}}</p>
+        </div>
+        <p style="align-self: flex-end" class="common-text">Статья опубликована {{ article.created_at }}</p>
+    </div>
+    {% if user.is_authenticated %}
+    <h2>Оставьте комментарий</h2>
+    <form action="{% url 'mainApp:add_comment' article.id %}" class="form" method="post">
+        {% csrf_token %}
+        <label class="common-text" for="comment-text">Введите текст</label>
+        <textarea name="comment-text" id="comment-text" cols="30" rows="10" required></textarea>
+        <button class="btn" type="submit" style="align-self: flex-end;">Отправить</button>
+    </form>
+    {% endif %}
+    <h2>Комментарии</h2>
+    <div class="comments">
+        {% if comments %}
+        {% for comment in comments%}
+                <div class="comment wrapper" id="comment-{{comment.id}}">
+                    <p class="common-text comment__author">{{ comment.author }}</p>
+                    <p class="common-text comment__text">{{ comment.text }}</p>
+                    <div class="vertical-wrapper" style="border-top: 1px solid black; margin-top: 15px;">
+                        {% if user.is_authenticated and user.id == comment.author_id %}
+                            <div class="button-box">
+                                <a href="{% url 'mainApp:delete_comment' comment.id %}" class="btn">Удалить</a>
+                            </div>
+                        {% endif %}
+                        <p class="comment_date">{{ comment.created_at }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+        <p class="common-text">У этой статьи пока нет комментариев. Станьте первым!</p>
+        {% endif %}
+    </div>
+{% endblock content %}

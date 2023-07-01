@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block document_title %}Регистрация{% endblock document_title %}
+{% block additional_styles %}{% endblock additional_styles %}
+
+{% block content %}
+    <h1>Регистрация</h1>
+    <form action="{% url 'users:register' %}" method="post" class="form">
+        {% csrf_token %}
+        {% if form.errors %}
+            {{ form.errors }}
+        {% endif %}
+        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+        {{ form.username }}
+        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+        {{ form.email }}
+        <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+        {{ form.password1 }}
+        <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+        {{ form.password2 }}
+        <button style="align-self: flex-end;" class="btn" type="submit">Отправить</button>
+    </form>
+{% endblock content %}
